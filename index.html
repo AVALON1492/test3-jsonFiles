@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
+		.root {
+			--round: 0%;
+		}
 
         body {
             margin: 0 auto;
@@ -23,6 +26,7 @@
             width: 100px;
             height: 100px;
             background-color: black;
+			border-radius: var(--round);
         }
 
         .buttonSettings:hover {
@@ -86,7 +90,7 @@
 </div>
 
 <div class="buttonSettings" id="buttonTheme"></div>
-<div class="buttonSettings"></div>
+<div class="buttonSettings" id="buttonRound"></div>
 <div class="buttonSettings"></div>
 
 <div class="blockDown">
@@ -98,6 +102,7 @@
 <script>
 
 //TODO SETTINGS
+const root = document.querySelector(":root");
 let objectGameName;
 objectGameName = {
 	codeGame: "Soul Breaker",
@@ -158,7 +163,18 @@ const themeSetting = new SETTINGSTOOGLE(buttonTheme, "theme", true,
 
 themeSetting.setChange();
 
-//
+const roundSetting = new SETTINGSTOOGLE(buttonRound, "round", false,
+	() => {
+		root.style.setProperty("--round", "50%");
+	},
+	() => {
+		root.style.setProperty("--round", "0%");
+	}
+);
+
+roundSetting.setChange();
+
+//FILES
 
 let fileHandle = null;
 
@@ -172,9 +188,14 @@ const onBeforeUnload = () => {
 	}
 }
 
+const setSettingNewDefault = (objectSetting) => {
+	objectSetting.isNewDefault();
+	objectSetting.setToogle();
+}
+
 const setNewDefault = () => {
-	themeSetting.isNewDefault();
-	themeSetting.setToogle();
+	setSettingNewDefault(themeSetting);
+	setSettingNewDefault(roundSetting);
 }
 
 buttonNewGame.addEventListener("click", () => {
@@ -256,6 +277,8 @@ buttonSaveAs.addEventListener("click", async () => {
 			excludeAcceptAllOption: true
 		});
 		save();
+		buttonSave.style.opacity = 1;
+		buttonSave.style.pointerEvents = "all";
 		buttonSave.innerText = "Guardar " + fileHandle.name;
 	} catch {}
 })
